@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+<main className="flex justify-center items-center h-screen p-6">
+      <div className="flex flex-col justify-center  gap-6 rounded-lg bg-gray-50 px-6 py-10 w-3/5">
+        <p
+          className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}
+        >
+          <strong>Welcome to Train Schedule.</strong> An application for viewing
+          and managing train schedules with the functions of authorization,
+          searching, editing, and deleting records.
+        </p>
+        <Link
+          href="/login"
+          className="flex items-center gap-5 self-center rounded-lg bg-blue-500 px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+        >
+          <span>Login</span>
+        </Link>
+      </div>
+    </main>
