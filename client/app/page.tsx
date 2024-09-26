@@ -17,7 +17,8 @@ export default function Home() {
           >
             <Button
               variant="default"
-              className="px-11"
+              className="px-11 text-xl"
+              size="lg"
             >
               Login
             </Button>

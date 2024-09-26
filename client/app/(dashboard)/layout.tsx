@@ -13,7 +13,7 @@ export default function DashboardLayout({
       </header>
 
       <main className="p-6">{children}</main>
-      <footer className=" bg-neutral-200 p-6">
+      <footer className=" bg-neutral-200 p-6 text-center">
         <p className="flex justify-center">&copy; 2023 Train Schedule App</p>
       </footer>
     </div>
