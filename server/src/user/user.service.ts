@@ -23,11 +23,12 @@ export class UserService {
     if (isUser) throw new BadRequestException('Email already exists');
 
     const { username, email, password } = createUserDto;
+    const hashedPassword = await argon2.hash(password);
 
     const user = await this.userRepo.save({
       username,
       email,
-      password: await argon2.hash(password),
+      password: hashedPassword,
     });
     const payload = { email };
     const token = this.jwtService.sign(payload);
@@ -46,6 +47,7 @@ export class UserService {
         id: true,
         username: true,
         email: true,
+        password: true,
       },
     });
   }

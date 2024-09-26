@@ -20,8 +20,6 @@ export class AuthController {
   @Post('register')
   @UsePipes(new ValidationPipe())
   create(@Body() createUserDto: CreateUserDto) {
-    console.log('hello from register auth controller');
-
     return this.authService.register(createUserDto);
   }
 
