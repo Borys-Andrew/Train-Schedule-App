@@ -1,4 +1,5 @@
-import * as argon2 from 'argon2';
+import * as bcrypt from 'bcrypt';
+
 import { UnauthorizedException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
@@ -14,7 +15,7 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.userService.findOne(email);
-    const isPasswordMatch = await argon2.verify(user.password, password);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (user && isPasswordMatch) {
       return user;

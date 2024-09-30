@@ -1,39 +1,18 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-
-type User = {
-  userName: string | null;
-  userId: string | null;
-  isAuth: boolean;
-};
+import { useLocalStorage } from 'usehooks-ts';
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User>(() => {
-    const storedUser = localStorage.getItem('authUser');
-
-    return storedUser
-      ? JSON.parse(storedUser)
-      : {
-          userName: null,
-          userId: null,
-          isAuth: false,
-        };
+  const [authData, setAuthData, removeValue] = useLocalStorage('authUser', {
+    isAuth: false,
+    token: undefined,
   });
 
-  useEffect(() => {
-    localStorage.setItem('authUser', JSON.stringify(user));
-  }, [user]);
-
   const logout = () => {
-    setUser({
-      userName: null,
-      userId: null,
+    setAuthData({
       isAuth: false,
+      token: undefined,
     });
-
-    localStorage.removeItem('authUser');
+    removeValue();
   };
 
-  return { user, setUser, logout };
+  return { authData, setAuthData, logout };
 };

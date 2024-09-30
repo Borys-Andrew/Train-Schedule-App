@@ -1,9 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import * as argon2 from 'argon2';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -13,6 +17,7 @@ export class UserService {
     private readonly userRepo: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
+
   async create(createUserDto: CreateUserDto) {
     const isUser = await this.userRepo.findOne({
       where: {
@@ -23,8 +28,7 @@ export class UserService {
     if (isUser) throw new BadRequestException('Email already exists');
 
     const { username, email, password } = createUserDto;
-    const hashedPassword = await argon2.hash(password);
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await this.userRepo.save({
       username,
       email,
@@ -38,8 +42,9 @@ export class UserService {
       token,
     };
   }
+
   async findOne(email: string) {
-    return await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: {
         email,
       },
@@ -50,5 +55,9 @@ export class UserService {
         password: true,
       },
     });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return user;
   }
 }

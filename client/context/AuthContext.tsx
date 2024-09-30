@@ -4,13 +4,11 @@ import React, { createContext } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 type AuthContextTypes = {
-  userName: string | null;
-  userId: string | null;
+  token: string | undefined;
   isAuth: boolean;
-  setUser: React.Dispatch<
+  setAuthData: React.Dispatch<
     React.SetStateAction<{
-      userName: string | null;
-      userId: string | null;
+      token: string | undefined;
       isAuth: boolean;
     }>
   >;
@@ -18,19 +16,18 @@ type AuthContextTypes = {
 };
 
 export const AuthContext = createContext<AuthContextTypes>({
-  userName: null,
-  userId: null,
+  token: undefined,
   isAuth: false,
-  setUser: () => {},
+  setAuthData: () => {},
   logout: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user, setUser, logout } = useAuth();
+  const { authData, setAuthData, logout } = useAuth();
 
   const value = {
-    ...user,
-    setUser,
+    ...authData,
+    setAuthData,
     logout,
   };
 

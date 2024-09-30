@@ -24,9 +24,12 @@ export class TrainsService {
   }
 
   async findAll(): Promise<Train[]> {
-    return await this.trainRepo.find();
+    return await this.trainRepo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
-
   async findOne(id: string): Promise<Train> {
     const train = await this.trainRepo.findOne({ where: { id } });
 

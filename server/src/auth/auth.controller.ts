@@ -7,6 +7,7 @@ import {
   UsePipes,
   ValidationPipe,
   Body,
+  HttpCode,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
@@ -24,6 +25,7 @@ export class AuthController {
   }
 
   @UseGuards(LocalAuthGuard)
+  @HttpCode(200)
   @Post('login')
   async login(@Request() req) {
     return this.authService.login(req.user);
@@ -32,6 +34,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getProfile(@Request() req) {
-    return req.user;
+    const { id, username, email } = req.user;
+    return { id, username, email };
   }
 }
