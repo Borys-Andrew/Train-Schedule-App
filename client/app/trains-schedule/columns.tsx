@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import TrainModal from '@/components/trainModal';
 import Loader from '@/components/loader';
+import { toast } from 'sonner';
 
 const ActionsMenu = ({ row }: CellContext<Train, unknown>) => {
   const [isModal, setIsModal] = useState(false);
@@ -61,6 +62,9 @@ const ActionsMenu = ({ row }: CellContext<Train, unknown>) => {
           <DropdownMenuItem
             onClick={() => {
               removeTrainById(train.id as string);
+              toast.success(
+                `Train #${train.number} route "${train.route}" removed successfully!`,
+              );
             }}
           >
             Delete

@@ -1,8 +1,15 @@
 'use client';
 
+import { useContext } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { signup } from '@/api';
+import { AuthContext } from '@/context/AuthContext';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -14,8 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import Link from 'next/link';
-import { signup } from '@/api';
+import Loader from '@/components/loader';
 
 const formFields: Array<{
   label: string;
@@ -50,6 +56,8 @@ const formSchema = z.object({
 });
 
 export default function RegisterPage() {
+  const { setAuthData } = useContext(AuthContext);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,16 +67,29 @@ export default function RegisterPage() {
     },
   });
 
+  const { mutate: registerUser, isPending } = useMutation({
+    mutationFn: signup,
+    onSuccess: (userData) => {
+      setAuthData({
+        isAuth: true,
+        token: userData.token as string,
+      });
+      toast.success('Signed-up in successfully');
+      router.push('/trains-schedule');
+      form.reset();
+    },
+    onError: (error) => {
+      toast.error(`Failed to Sign-up: ${error.message}`);
+    },
+  });
+
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    try {
-      const data = await signup(formData);
-    } catch (error) {
-      console.log('🚀 ~ onSubmit ~ error:', error);
-    }
+    await registerUser(formData);
   };
 
   return (
     <div className="flex items-center justify-center px-2">
+      {isPending && <Loader />}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

@@ -55,7 +55,6 @@ export const createTrain = async (train: Train) => {
 export const removeTrainById = async (id: string) => {
   const token = JSON.parse(localStorage.getItem('authUser') as string).token;
 
-  console.log('🚀 ~ removeTrainById ~ id:', id);
   try {
     const response = await axios.delete(`trains/${id}`, {
       headers: {
@@ -99,7 +98,7 @@ export const signup = async (userData: User) => {
   try {
     const response = await axios.post(`auth/register`, userData);
 
-    return response;
+    return response.data;
   } catch (error) {
     console.log('🚀 ~ error:', error);
   }

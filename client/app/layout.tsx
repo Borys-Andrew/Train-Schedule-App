@@ -1,9 +1,10 @@
 'use client';
 
-import '@/app/globals.css';
-import NavigationBar from '@/components/navigation-bar';
-import { AuthProvider } from '@/context/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
+import { AuthProvider } from '@/context/AuthContext';
+import NavigationBar from '@/components/navigation-bar';
+import '@/app/globals.css';
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ export default function RootLayout({
               <main className="p-6">
                 <div id="modal-root"></div>
                 {children}
+                <Toaster position="top-right" />
               </main>
               <footer className=" bg-neutral-200 p-3 text-center">
                 <p className="flex justify-center">

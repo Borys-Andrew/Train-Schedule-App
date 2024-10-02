@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
 import { Train } from '@/types/Train';
 import { Button } from '@/components/ui/button';
@@ -20,21 +21,25 @@ const formFields: Array<{
   label: string;
   name: 'id' | 'number' | 'route' | 'track' | 'arrival' | 'departure';
   type: 'text' | 'number' | 'time';
+  placeholder?: string;
 }> = [
   {
     label: 'Train Number',
     name: 'number',
     type: 'text',
+    placeholder: 'Train number',
   },
   {
     label: 'Route',
     name: 'route',
     type: 'text',
+    placeholder: 'Departure City - Arrival City',
   },
   {
     label: 'Track',
     name: 'track',
     type: 'number',
+    placeholder: 'Track number',
   },
   {
     label: 'Arrival Time',
@@ -50,17 +55,35 @@ const formFields: Array<{
 
 const formSchema = z.object({
   id: z.string().optional(),
-  number: z.string().nonempty({
-    message: 'Train number is required',
-  }),
-  route: z.string().nonempty({
-    message: 'Route is required',
-  }),
+  number: z
+    .string()
+    .nonempty({
+      message: 'Train number is required',
+    })
+    .max(4, {
+      message: 'Track number must be between 1 and 4',
+    }),
+  route: z
+    .string()
+    .nonempty({
+      message: 'Route is required',
+    })
+    .refine(
+      (route) => /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]+ - [A-Za-zÀ-ÖØ-öø-ÿ\s-]+$/.test(route),
+      {
+        message:
+          'Route must be in the format "City - City" and cities can contain hyphens',
+      },
+    ),
   track: z.coerce.number().min(1, {
     message: 'Track number must be a positive number',
   }),
-  arrival: z.string().nonempty(),
-  departure: z.string().nonempty(),
+  arrival: z.string().nonempty({
+    message: 'Arrival time is required',
+  }),
+  departure: z.string().nonempty({
+    message: 'Departure time is required',
+  }),
 });
 
 type TrainFormProps = {
@@ -93,10 +116,16 @@ export default function TrainModal({
   const onSubmit = async (formData: Train) => {
     if (onHandleAddTrain) {
       await onHandleAddTrain(formData);
+      toast.success(
+        `Train #${formData.number} route "${formData.route}" added successfully!`,
+      );
       onClose(false);
     }
     if (onHandleEditTrain) {
       await onHandleEditTrain(formData);
+      toast.success(
+        `Train #${formData.number} route "${formData.route}" edited successfully!`,
+      );
       onClose(false);
     }
   };
@@ -112,7 +141,7 @@ export default function TrainModal({
             <h1 className="text-4xl text-center mb-4">
               {isEditMode ? 'Edit Train' : 'Add Train'}
             </h1>
-            {formFields.map(({ name, label, type }) => {
+            {formFields.map(({ name, label, type, placeholder }) => {
               return (
                 <FormField
                   key={name}
@@ -124,7 +153,9 @@ export default function TrainModal({
                       <FormControl>
                         <Input
                           type={type}
-                          placeholder={`${label}...`}
+                          placeholder={`${
+                            placeholder ? placeholder : label
+                          }...`}
                           {...field}
                         />
                       </FormControl>

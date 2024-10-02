@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { login } from '@/api';
 import { AuthContext } from '@/context/AuthContext';
 
@@ -66,8 +67,12 @@ export default function LoginPage() {
         isAuth: true,
         token: userData.token as string,
       });
+      toast.success('Logged in successfully');
       router.push('/trains-schedule');
       form.reset();
+    },
+    onError: () => {
+      toast.error('Failed to login: Email or password is incorrect');
     },
   });
 

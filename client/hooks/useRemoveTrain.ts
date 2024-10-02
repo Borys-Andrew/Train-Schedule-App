@@ -12,6 +12,8 @@ export const useRemoveTrain = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trains'] });
+
+      return true;
     },
   });
 };
